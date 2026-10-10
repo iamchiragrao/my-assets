@@ -1357,27 +1357,53 @@
           reader.onerror = reject;
         });
 
-        item.progress = 30;
+        item.progress = 15;
         const base64Content = await fileToBase64(item.file);
-        item.progress = 60;
+        item.progress = 30;
 
+        // Check if file already exists using local in-memory edgeAssets to avoid 404 console warnings
         let existingSha = null;
-        const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${ASSETS_REPO}/contents/assets/${encodeURIComponent(item.cleanName)}`, {
-          headers: { 'Authorization': `token ${token.value.trim()}`, 'Accept': 'application/vnd.github.v3+json' }
-        });
-        if (checkRes.ok) existingSha = (await checkRes.json()).sha;
+        const existingItem = edgeAssets.value.find(a => a.name === item.cleanName);
+        if (existingItem && existingItem.sha) {
+          existingSha = existingItem.sha;
+        }
 
         const bodyPayload = { message: `Upload asset: ${item.cleanName}`, content: base64Content, branch: BRANCH };
         if (existingSha) bodyPayload.sha = existingSha;
+        const payloadString = JSON.stringify(bodyPayload);
 
-        const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${ASSETS_REPO}/contents/assets/${encodeURIComponent(item.cleanName)}`, {
-          method: 'PUT',
-          headers: { 'Authorization': `token ${token.value.trim()}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyPayload)
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('PUT', `https://api.github.com/repos/${REPO_OWNER}/${ASSETS_REPO}/contents/assets/${encodeURIComponent(item.cleanName)}`, true);
+          xhr.setRequestHeader('Authorization', `token ${token.value.trim()}`);
+          xhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+          xhr.setRequestHeader('Content-Type', 'application/json');
+
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              // Smoothly map network upload to 30% -> 96%
+              item.progress = 30 + Math.round((e.loaded / e.total) * 66);
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              item.progress = 100;
+              item.url = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${ASSETS_REPO}@${BRANCH}/assets/${encodeURIComponent(item.cleanName)}`;
+              resolve(JSON.parse(xhr.responseText));
+            } else {
+              try {
+                const errData = JSON.parse(xhr.responseText);
+                reject(new Error(errData.message || `Edge HTTP ${xhr.status}`));
+              } catch {
+                reject(new Error(`Edge HTTP ${xhr.status}`));
+              }
+            }
+          };
+
+          xhr.onerror = () => reject(new Error('Network upload failed. Check connection or token permissions.'));
+          xhr.send(payloadString);
         });
-
-        if (!putRes.ok) throw new Error(`Edge HTTP ${putRes.status}`);
-        item.url = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${ASSETS_REPO}@${BRANCH}/assets/${encodeURIComponent(item.cleanName)}`;
       };
 
       const uploadAllFiles = async () => {
@@ -1400,6 +1426,8 @@
             }
             item.status = 'done';
             item.progress = 100;
+            // Incremental refresh so card appears immediately
+            await fetchAll();
           } catch (err) {
             item.status = 'error';
             item.errorMsg = err.message;
