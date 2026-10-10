@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Assets & CDN Dashboard | iamchiragrao</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a855f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='12 2 2 7 12 12 22 7 12 2'/><polyline points='2 17 12 22 22 17'/><polyline points='2 12 12 17 22 12'/></svg>" />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              200: '#e9d5ff',
+              300: '#d8b4fe',
+              400: '#c084fc',
+              500: '#a855f7',
+              600: '#9333ea',
+              700: '#7e22ce',
+              800: '#6b21a8',
+              900: '#581c87',
+              accent: '#8b5cf6',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue.js 3 Production CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <style>
+    [v-cloak] { display: none; }
+    body {
+      background-color: #09090b;
+      color: #f4f4f5;
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.3);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(168, 85, 247, 0.6);
+    }
+    .glass-card {
+      background: rgba(18, 18, 24, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+    .gradient-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#09090b] text-zinc-100 antialiased selection:bg-purple-600 selection:text-white custom-scrollbar">
+
+<div id="app" v-cloak class="min-h-screen flex flex-col relative overflow-x-hidden">
+  <!-- Ambient Background Glow -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-purple-900/20 via-violet-900/10 to-transparent blur-[120px]"></div>
+    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/10 blur-[150px]"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 w-full glass-card border-b border-zinc-800/80 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 p-[1px] shadow-lg shadow-purple-500/20">
+        <div class="w-full h-full bg-[#0d0d12] rounded-[11px] flex items-center justify-center">
+          <svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono font-bold tracking-tight text-base sm:text-lg bg-gradient-to-r from-white via-zinc-200 to-purple-400 bg-clip-text text-transparent">
+            MY-ASSETS
+          </span>
+          <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            CDN v2.0
+          </span>
+        </div>
+        <div class="text-[11px] font-mono text-zinc-500 hidden sm:block">
+          iamchiragrao / my-assets • jsDelivr Edge Powered
+        </div>
+      </div>
+    </div>
+
+    <!-- Center CDN Status Badge -->
+    <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/80 border border-zinc-800 text-xs">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span class="text-zinc-400 font-mono text-[11px]">jsDelivr Global Anycast CDN</span>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-2.5">
+      <!-- Token Configuration Button -->
+      <button 
+        @click="openTokenModal = true"
+        :class="hasToken ? 'border-emerald-500/40 text-emerald-300 bg-emerald-950/20 hover:bg-emerald-900/30' : 'border-amber-500/40 text-amber-300 bg-amber-950/20 hover:bg-amber-900/30'"
+        class="flex items-center gap-1.5 text-xs font-mono px-3 py-1.5 rounded-lg border transition-all cursor-pointer shadow-sm"
+        title="GitHub Access Token Settings"
+      >
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>{{ hasToken ? 'PAT Active' : 'Enter PAT' }}</span>
+      </button>
+
+      <!-- Refresh Button -->
+      <button 
+        @click="fetchAssets" 
+        :disabled="loading"
+        class="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 transition-all disabled:opacity-50"
+        title="Refresh Assets"
+      >
+        <svg :class="{'animate-spin': loading}" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 2v6h-6"/>
+          <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+          <path d="M3 22v-6h6"/>
+          <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+        </svg>
+      </button>
+
+      <!-- Upload Trigger Button -->
+      <button 
+        @click="showUploadDrawer = !showUploadDrawer"
+        class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-lg shadow-purple-600/20 cursor-pointer active:scale-95"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span class="hidden sm:inline">Upload Asset</span>
+        <span class="sm:hidden">Upload</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10 flex flex-col gap-6">
+
+    <!-- Top Banner & Quick Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <!-- Total Assets -->
+      <div class="glass-card rounded-2xl p-4 flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">Total Assets</div>
+          <div class="text-2xl font-bold font-mono text-white">{{ assets.length }}</div>
+        </div>
+      </div>
+
+      <!-- Videos Count -->
+      <div class="glass-card rounded-2xl p-4 flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">Videos</div>
+          <div class="text-2xl font-bold font-mono text-white">{{ videoCount }}</div>
+        </div>
+      </div>
+
+      <!-- Images Count -->
+      <div class="glass-card rounded-2xl p-4 flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">Images & Graphics</div>
+          <div class="text-2xl font-bold font-mono text-white">{{ imageCount }}</div>
+        </div>
+      </div>
+
+      <!-- jsDelivr Base CDN URL Card -->
+      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[11px] font-mono uppercase text-zinc-400 tracking-wider mb-1">
+          <span>CDN Base URL</span>
+          <span class="text-emerald-400 font-semibold text-[10px]">Unlimited Free Edge</span>
+        </div>
+        <div class="flex items-center justify-between gap-2 bg-black/40 px-2.5 py-1.5 rounded-lg border border-zinc-800">
+          <span class="font-mono text-xs text-purple-300 truncate">cdn.jsdelivr.net/gh/iamchiragrao...</span>
+          <button 
+            @click="copyText(cdnBaseUrl, 'CDN Base URL')" 
+            class="text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            title="Copy Base URL"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Drawer / Zone (Collapsible or Drag & Drop) -->
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="transform -translate-y-4 opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform -translate-y-4 opacity-0"
+    >
+      <div v-if="showUploadDrawer" class="glass-card rounded-2xl p-6 border-purple-500/30 relative">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse"></span>
+            <h2 class="font-bold text-base text-white">Upload New Assets to CDN</h2>
+            <span class="text-xs text-zinc-400 font-mono hidden sm:inline">(Saved to /assets & instantly published on jsDelivr)</span>
+          </div>
+          <button @click="showUploadDrawer = false" class="text-zinc-500 hover:text-zinc-300">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Drag & Drop Box -->
+        <div 
+          @dragover.prevent="isDragging = true"
+          @dragleave.prevent="isDragging = false"
+          @drop.prevent="handleDrop"
+          :class="isDragging ? 'border-purple-400 bg-purple-500/10' : 'border-zinc-700/80 hover:border-purple-500/50 bg-black/20'"
+          class="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200"
+          @click="$refs.fileInput.click()"
+        >
+          <input 
+            type="file" 
+            ref="fileInput" 
+            multiple 
+            class="hidden" 
+            @change="handleFileSelect" 
+            accept="image/*,video/*,audio/*,.svg,.pdf,.json" 
+          />
+          <div class="w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-3 shadow-inner">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="text-sm font-medium text-white mb-1">
+            Drag & drop files here, or <span class="text-purple-400 underline decoration-purple-500/40">browse from computer</span>
+          </p>
+          <p class="text-xs text-zinc-500 font-mono">
+            Supports MP4, WebM, MOV, PNG, JPG, WebP, SVG, GIF, Audio (Up to 100MB)
+          </p>
+        </div>
+
+        <!-- Selected Files Queue for Upload -->
+        <div v-if="uploadQueue.length > 0" class="mt-4 flex flex-col gap-2">
+          <div class="flex items-center justify-between text-xs font-mono text-zinc-400">
+            <span>Pending Files ({{ uploadQueue.length }})</span>
+            <button @click="uploadAllFiles" :disabled="isUploading" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded font-sans font-semibold cursor-pointer text-xs">
+              {{ isUploading ? 'Uploading...' : 'Start Upload All' }}
+            </button>
+          </div>
+
+          <div class="max-h-56 overflow-y-auto custom-scrollbar flex flex-col gap-2 pr-1">
+            <div 
+              v-for="(item, idx) in uploadQueue" 
+              :key="idx" 
+              class="glass-card rounded-lg p-2.5 flex items-center justify-between text-xs"
+            >
+              <div class="flex items-center gap-2 truncate max-w-[70%]">
+                <span class="font-mono text-purple-400">{{ formatSize(item.file.size) }}</span>
+                <span class="truncate text-zinc-200 font-medium">{{ item.cleanName }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span v-if="item.status === 'uploading'" class="text-yellow-400 font-mono animate-pulse">Uploading {{ item.progress }}%</span>
+                <span v-else-if="item.status === 'done'" class="text-emerald-400 font-mono font-medium">Completed</span>
+                <span v-else-if="item.status === 'error'" class="text-rose-400 font-mono">{{ item.errorMsg || 'Failed' }}</span>
+                <span v-else class="text-zinc-500 font-mono">Ready</span>
+
+                <button 
+                  v-if="item.status === 'done'"
+                  @click="copyText(getCdnUrl(item.cleanName), 'CDN Link')"
+                  class="text-xs text-purple-400 hover:text-purple-300 font-mono underline ml-2"
+                >
+                  Copy URL
+                </button>
+                <button 
+                  v-if="item.status !== 'uploading'" 
+                  @click="removeQueueItem(idx)" 
+                  class="text-zinc-500 hover:text-rose-400 ml-1"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Toolbar: Search, Filters, Sorting -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <!-- Search Bar -->
+      <div class="relative flex-1 max-w-md">
+        <svg class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="Search by asset filename..." 
+          class="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl pl-10 pr-4 py-2 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all font-sans"
+        />
+        <button 
+          v-if="searchQuery" 
+          @click="searchQuery = ''" 
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Filters & Sorters -->
+      <div class="flex items-center flex-wrap gap-2">
+        <!-- Type Filter Chips -->
+        <div class="flex items-center bg-zinc-900/80 p-1 rounded-xl border border-zinc-800 text-xs font-mono">
+          <button 
+            v-for="cat in categories" 
+            :key="cat.id"
+            @click="selectedCategory = cat.id"
+            :class="selectedCategory === cat.id ? 'bg-purple-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'"
+            class="px-2.5 py-1 rounded-lg transition-all capitalize"
+          >
+            {{ cat.name }}
+          </button>
+        </div>
+
+        <!-- Sort Dropdown -->
+        <select 
+          v-model="sortBy" 
+          class="bg-zinc-900/90 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono text-zinc-300 focus:outline-none focus:border-purple-500 cursor-pointer"
+        >
+          <option value="name_asc">Name (A-Z)</option>
+          <option value="name_desc">Name (Z-A)</option>
+          <option value="size_desc">Size (Largest)</option>
+          <option value="size_asc">Size (Smallest)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Asset Grid / List -->
+    <div v-if="loading && assets.length === 0" class="flex flex-col items-center justify-center py-20 text-zinc-500">
+      <svg class="animate-spin w-8 h-8 text-purple-500 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      <p class="font-mono text-sm">Fetching repository assets from GitHub API...</p>
+    </div>
+
+    <div v-else-if="filteredAssets.length === 0" class="glass-card rounded-2xl p-12 text-center flex flex-col items-center justify-center">
+      <div class="w-14 h-14 rounded-2xl bg-zinc-800/50 border border-zinc-700/50 flex items-center justify-center text-zinc-500 mb-4">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-1">No Assets Found</h3>
+      <p class="text-sm text-zinc-400 max-w-md mb-6">
+        {{ searchQuery ? 'No assets matched your search filter.' : 'Your /assets folder is currently empty. Upload your videos or images to get instant global CDN URLs!' }}
+      </p>
+      <button 
+        @click="showUploadDrawer = true" 
+        class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-purple-600/20 cursor-pointer"
+      >
+        Upload First Asset
+      </button>
+    </div>
+
+    <!-- Grid View -->
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div 
+        v-for="asset in filteredAssets" 
+        :key="asset.sha"
+        class="glass-card rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-950/20 group relative border border-zinc-800/80"
+      >
+        <!-- Preview Box -->
+        <div class="h-48 w-full bg-black/60 relative overflow-hidden flex items-center justify-center border-b border-zinc-800/80">
+          <!-- Video Preview -->
+          <div v-if="isVideo(asset.name)" class="w-full h-full relative flex items-center justify-center group/video cursor-pointer" @click="openPreviewModal(asset)">
+            <video 
+              :src="getCdnUrl(asset.name)" 
+              muted 
+              preload="metadata"
+              playsinline
+              class="w-full h-full object-cover transition-transform duration-300 group-hover/video:scale-105"
+              @mouseover="$event.target.play().catch(()=>{})"
+              @mouseleave="$event.target.pause()"
+            ></video>
+            <!-- Play Overlay Badge -->
+            <div class="absolute inset-0 bg-black/30 group-hover/video:bg-transparent flex items-center justify-center transition-all pointer-events-none">
+              <div class="w-10 h-10 rounded-full bg-purple-600/80 backdrop-blur-md flex items-center justify-center text-white shadow-lg group-hover/video:scale-110 transition-transform">
+                <svg class="w-5 h-5 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+            </div>
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/80 text-white backdrop-blur">
+              VIDEO
+            </span>
+          </div>
+
+          <!-- Image Preview -->
+          <div v-else-if="isImage(asset.name)" class="w-full h-full relative cursor-pointer group/img flex items-center justify-center" @click="openPreviewModal(asset)">
+            <img 
+              :src="getCdnUrl(asset.name)" 
+              :alt="asset.name"
+              loading="lazy"
+              class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover/img:scale-105"
+            />
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/80 text-white backdrop-blur">
+              IMAGE
+            </span>
+          </div>
+
+          <!-- Other / Document -->
+          <div v-else class="w-full h-full flex flex-col items-center justify-center text-zinc-500 cursor-pointer" @click="openPreviewModal(asset)">
+            <svg class="w-12 h-12 mb-2 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span class="font-mono text-xs uppercase">{{ getExt(asset.name) }}</span>
+          </div>
+
+          <!-- File Size Badge -->
+          <span class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-mono bg-black/80 text-zinc-300 border border-zinc-700/50">
+            {{ formatSize(asset.size) }}
+          </span>
+        </div>
+
+        <!-- Asset Info & Actions -->
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <div>
+            <h4 class="font-semibold text-sm text-zinc-100 truncate mb-1" :title="asset.name">
+              {{ asset.name }}
+            </h4>
+            <div class="flex items-center gap-1.5 text-[11px] font-mono text-zinc-500 mb-3 truncate">
+              <span class="text-purple-400">@main</span>
+              <span>•</span>
+              <span class="truncate">assets/{{ asset.name }}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="flex flex-col gap-2 pt-2 border-t border-zinc-800/80">
+            <!-- 1-Click Copy jsDelivr CDN URL Button -->
+            <button 
+              @click="copyText(getCdnUrl(asset.name), 'jsDelivr CDN URL')"
+              class="w-full py-1.5 px-3 rounded-lg bg-purple-600/10 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 text-xs font-mono font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer group-hover:border-purple-500/60"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span>Copy CDN Link</span>
+            </button>
+
+            <!-- Secondary Actions: Embed code, Purge Cache, Delete -->
+            <div class="grid grid-cols-3 gap-1.5">
+              <!-- Embed Code -->
+              <button 
+                @click="copyEmbedCode(asset)"
+                class="py-1 px-1.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-[11px] font-mono flex items-center justify-center gap-1 transition-all"
+                title="Copy HTML / Video tag"
+              >
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 18 22 12 16 6"/>
+                  <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                <span>Embed</span>
+              </button>
+
+              <!-- Purge Cache -->
+              <button 
+                @click="purgeCdn(asset.name)"
+                class="py-1 px-1.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-amber-300 text-[11px] font-mono flex items-center justify-center gap-1 transition-all"
+                title="Purge jsDelivr edge cache for this file"
+              >
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v4"/>
+                  <path d="m4.93 4.93 2.83 2.83"/>
+                  <path d="M2 12h4"/>
+                  <path d="M20 12h2"/>
+                  <path d="m19.07 4.93-2.83 2.83"/>
+                </svg>
+                <span>Purge</span>
+              </button>
+
+              <!-- Delete Asset -->
+              <button 
+                @click="confirmDelete(asset)"
+                class="py-1 px-1.5 rounded bg-zinc-900 hover:bg-rose-950/40 border border-zinc-800 hover:border-rose-800/60 text-zinc-400 hover:text-rose-400 text-[11px] font-mono flex items-center justify-center gap-1 transition-all cursor-pointer"
+                title="Delete Asset from Repo"
+              >
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full glass-card border-t border-zinc-800/80 px-4 sm:px-8 py-4 mt-12 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-3">
+    <div>
+      Repo: <a href="https://github.com/iamchiragrao/my-assets" target="_blank" class="text-purple-400 hover:underline">github.com/iamchiragrao/my-assets</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="https://iamchiragrao.github.io" target="_blank" class="hover:text-zinc-300 transition-colors">Portfolio</a>
+      <span>•</span>
+      <a href="https://www.jsdelivr.com" target="_blank" class="hover:text-zinc-300 transition-colors">jsDelivr Network</a>
+      <span>•</span>
+      <button @click="openTokenModal = true" class="hover:text-purple-400 transition-colors">Settings</button>
+    </div>
+  </footer>
+
+  <!-- Preview Modal -->
+  <div v-if="previewAsset" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="glass-card rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-zinc-700/80 shadow-2xl">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/60">
+        <div class="flex items-center gap-2 truncate max-w-[80%]">
+          <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+          <span class="font-bold text-sm text-white truncate font-mono">{{ previewAsset.name }}</span>
+          <span class="text-xs text-zinc-500 font-mono">({{ formatSize(previewAsset.size) }})</span>
+        </div>
+        <button @click="previewAsset = null" class="text-zinc-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Viewer) -->
+      <div class="p-6 flex-1 overflow-auto flex items-center justify-center bg-black/70 min-h-[300px]">
+        <video 
+          v-if="isVideo(previewAsset.name)" 
+          :src="getCdnUrl(previewAsset.name)" 
+          controls 
+          autoplay 
+          playsinline 
+          class="max-h-[60vh] max-w-full rounded-xl shadow-2xl"
+        ></video>
+        <img 
+          v-else-if="isImage(previewAsset.name)" 
+          :src="getCdnUrl(previewAsset.name)" 
+          :alt="previewAsset.name" 
+          class="max-h-[60vh] max-w-full object-contain rounded-xl"
+        />
+        <div v-else class="text-center py-12">
+          <p class="text-zinc-400 font-mono text-sm mb-4">Preview not directly supported in browser</p>
+          <a :href="getCdnUrl(previewAsset.name)" target="_blank" download class="px-4 py-2 bg-purple-600 rounded-lg text-xs font-semibold text-white">
+            Download File
+          </a>
+        </div>
+      </div>
+
+      <!-- Modal Footer (Links & Embeds) -->
+      <div class="p-4 border-t border-zinc-800 bg-zinc-900/90 flex flex-col gap-2">
+        <div class="text-[11px] font-mono text-zinc-400 flex items-center justify-between">
+          <span>jsDelivr Global CDN URL:</span>
+          <span class="text-emerald-400">Cached globally with edge acceleration</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input 
+            type="text" 
+            readonly 
+            :value="getCdnUrl(previewAsset.name)" 
+            class="flex-1 bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs font-mono text-purple-300 focus:outline-none"
+          />
+          <button 
+            @click="copyText(getCdnUrl(previewAsset.name), 'CDN URL')" 
+            class="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-semibold font-mono"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div v-if="deleteTarget" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-2xl max-w-md w-full p-6 border-rose-500/30">
+      <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2">Delete Asset?</h3>
+      <p class="text-sm text-zinc-400 mb-4">
+        Are you sure you want to delete <span class="font-mono text-white">{{ deleteTarget.name }}</span> from your repository? This action cannot be undone.
+      </p>
+      <div class="flex items-center justify-end gap-3">
+        <button 
+          @click="deleteTarget = null" 
+          :disabled="isDeleting"
+          class="px-4 py-2 rounded-xl border border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-semibold cursor-pointer"
+        >
+          Cancel
+        </button>
+        <button 
+          @click="executeDelete" 
+          :disabled="isDeleting"
+          class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-semibold cursor-pointer flex items-center gap-1.5"
+        >
+          <svg v-if="isDeleting" class="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+          </svg>
+          <span>{{ isDeleting ? 'Deleting...' : 'Confirm Delete' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Settings Modal -->
+  <div v-if="openTokenModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-2xl max-w-lg w-full p-6 border-purple-500/30">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-white">GitHub Access Token (PAT)</h3>
+        </div>
+        <button @click="openTokenModal = false" class="text-zinc-500 hover:text-zinc-300">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-zinc-400 mb-4 leading-relaxed">
+        Your GitHub Token allows you to upload and delete files directly from this browser UI. 
+        It is stored safely in your browser's <code class="text-purple-400 font-mono">localStorage</code> and is never sent to any third-party server.
+      </p>
+
+      <div class="mb-4">
+        <label class="block text-xs font-mono text-zinc-400 mb-1.5">Personal Access Token (classic with repo scope):</label>
+        <div class="relative">
+          <input 
+            v-model="inputToken" 
+            :type="showTokenPlain ? 'text' : 'password'" 
+            placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+            class="w-full bg-black/60 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-zinc-200 focus:outline-none focus:border-purple-500 pr-10"
+          />
+          <button 
+            type="button" 
+            @click="showTokenPlain = !showTokenPlain" 
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs"
+          >
+            {{ showTokenPlain ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-3 pt-2">
+        <button 
+          v-if="hasToken" 
+          @click="clearToken" 
+          class="text-xs text-rose-400 hover:underline font-mono"
+        >
+          Clear Token
+        </button>
+        <div v-else></div>
+
+        <div class="flex items-center gap-2">
+          <button 
+            @click="openTokenModal = false" 
+            class="px-4 py-2 rounded-xl border border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-semibold cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="saveToken" 
+            class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold cursor-pointer shadow-lg shadow-purple-600/20"
+          >
+            Save Token
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
+    <transition-group
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="transform translate-y-4 opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform translate-y-4 opacity-0"
+    >
+      <div 
+        v-for="toast in toasts" 
+        :key="toast.id" 
+        :class="toast.type === 'error' ? 'border-rose-500/50 bg-rose-950/90 text-rose-200' : 'border-purple-500/50 bg-zinc-900/90 text-purple-200'"
+        class="glass-card pointer-events-auto px-4 py-3 rounded-xl border shadow-xl flex items-center gap-2.5 text-xs font-medium max-w-sm"
+      >
+        <svg v-if="toast.type !== 'error'" class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <svg v-else class="w-4 h-4 text-rose-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ toast.message }}</span>
+      </div>
+    </transition-group>
+  </div>
+</div>
+
+<script>
+  const { createApp, ref, computed, onMounted } = Vue;
+
+  createApp({
+    setup() {
+      const REPO_OWNER = 'iamchiragrao';
+      const REPO_NAME = 'my-assets';
+      const BRANCH = 'main';
+      const cdnBaseUrl = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${BRANCH}/assets/`;
+
+      const token = ref(localStorage.getItem('gh_token') || '');
+      const inputToken = ref('');
+      const showTokenPlain = ref(false);
+      const openTokenModal = ref(false);
+
+      const assets = ref([]);
+      const loading = ref(false);
+      const searchQuery = ref('');
+      const selectedCategory = ref('all');
+      const sortBy = ref('name_asc');
+
+      const showUploadDrawer = ref(false);
+      const isDragging = ref(false);
+      const uploadQueue = ref([]);
+      const isUploading = ref(false);
+
+      const previewAsset = ref(null);
+      const deleteTarget = ref(null);
+      const isDeleting = ref(false);
+
+      const toasts = ref([]);
+
+      const categories = [
+        { id: 'all', name: 'All' },
+        { id: 'video', name: 'Videos' },
+        { id: 'image', name: 'Images' },
+        { id: 'other', name: 'Other' },
+      ];
+
+      const hasToken = computed(() => !!token.value && token.value.trim().length > 10);
+
+      // Check URL hash/query for token on load
+      const initTokenFromUrl = () => {
+        const hash = window.location.hash;
+        const search = window.location.search;
+        let foundToken = null;
+
+        if (hash.includes('token=')) {
+          const match = hash.match(/token=([^&]+)/);
+          if (match && match[1]) foundToken = decodeURIComponent(match[1]);
+        } else if (search.includes('token=')) {
+          const urlParams = new URLSearchParams(search);
+          foundToken = urlParams.get('token');
+        }
+
+        if (foundToken) {
+          token.value = foundToken;
+          localStorage.setItem('gh_token', foundToken);
+          // Clean URL so token is not left in history
+          window.history.replaceState({}, document.title, window.location.pathname);
+          showToast('Access token loaded and saved securely!');
+        }
+      };
+
+      const showToast = (message, type = 'success') => {
+        const id = Date.now() + Math.random();
+        toasts.value.push({ id, message, type });
+        setTimeout(() => {
+          toasts.value = toasts.value.filter(t => t.id !== id);
+        }, 3500);
+      };
+
+      const copyText = (text, label = 'Text') => {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`${label} copied to clipboard!`);
+        }).catch(() => {
+          showToast('Failed to copy text', 'error');
+        });
+      };
+
+      const getCdnUrl = (filename) => {
+        return `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${BRANCH}/assets/${encodeURIComponent(filename)}`;
+      };
+
+      const getRawUrl = (filename) => {
+        return `https://raw.githubusercontent.com/iamchiragrao/my-assets/main/assets/${encodeURIComponent(filename)}`;
+      };
+
+      const isVideo = (name) => /\.(mp4|webm|mov|m4v|ogg)$/i.test(name);
+      const isImage = (name) => /\.(png|jpg|jpeg|webp|gif|svg|avif|ico)$/i.test(name);
+      const getExt = (name) => name.split('.').pop() || 'file';
+
+      const formatSize = (bytes) => {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+      };
+
+      const videoCount = computed(() => assets.value.filter(a => isVideo(a.name)).length);
+      const imageCount = computed(() => assets.value.filter(a => isImage(a.name)).length);
+
+      const fetchAssets = async () => {
+        loading.value = true;
+        try {
+          const headers = { 'Accept': 'application/vnd.github.v3+json' };
+          if (token.value) {
+            headers['Authorization'] = `token ${token.value.trim()}`;
+          }
+
+          const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/assets`, { headers });
+          if (res.status === 404) {
+            assets.value = [];
+          } else if (!res.ok) {
+            throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+          } else {
+            const data = await res.json();
+            // Filter out README.md or .gitkeep placeholders if present
+            assets.value = Array.isArray(data) ? data.filter(item => item.type === 'file' && item.name !== '.gitkeep' && item.name !== 'README.md') : [];
+          }
+        } catch (err) {
+          console.error(err);
+          showToast(err.message || 'Failed to fetch assets', 'error');
+        } finally {
+          loading.value = false;
+        }
+      };
+
+      const filteredAssets = computed(() => {
+        let result = assets.value;
+        if (selectedCategory.value === 'video') {
+          result = result.filter(a => isVideo(a.name));
+        } else if (selectedCategory.value === 'image') {
+          result = result.filter(a => isImage(a.name));
+        } else if (selectedCategory.value === 'other') {
+          result = result.filter(a => !isVideo(a.name) && !isImage(a.name));
+        }
+
+        if (searchQuery.value.trim()) {
+          const q = searchQuery.value.toLowerCase();
+          result = result.filter(a => a.name.toLowerCase().includes(q));
+        }
+
+        return [...result].sort((a, b) => {
+          if (sortBy.value === 'name_asc') return a.name.localeCompare(b.name);
+          if (sortBy.value === 'name_desc') return b.name.localeCompare(a.name);
+          if (sortBy.value === 'size_desc') return (b.size || 0) - (a.size || 0);
+          if (sortBy.value === 'size_asc') return (a.size || 0) - (b.size || 0);
+          return 0;
+        });
+      });
+
+      // Purge Cache on jsDelivr
+      const purgeCdn = async (filename) => {
+        try {
+          const purgeUrl = `https://purge.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${BRANCH}/assets/${encodeURIComponent(filename)}`;
+          const res = await fetch(purgeUrl);
+          const data = await res.json();
+          if (data.status === 'finished') {
+            showToast(`CDN cache refreshed for ${filename}!`);
+          } else {
+            showToast(`Purge status: ${data.status}`);
+          }
+        } catch (e) {
+          showToast(`Purge request sent for ${filename}`);
+        }
+      };
+
+      // Copy Embed Code (HTML or Markdown)
+      const copyEmbedCode = (asset) => {
+        const cdnUrl = getCdnUrl(asset.name);
+        let snippet = '';
+        if (isVideo(asset.name)) {
+          snippet = `<video src="${cdnUrl}" autoplay loop muted playsinline controls></video>`;
+        } else if (isImage(asset.name)) {
+          snippet = `<img src="${cdnUrl}" alt="${asset.name}" loading="lazy" />`;
+        } else {
+          snippet = `<a href="${cdnUrl}" target="_blank">${asset.name}</a>`;
+        }
+        copyText(snippet, 'HTML Embed Tag');
+      };
+
+      // Upload handling
+      const cleanFilename = (name) => {
+        return name
+          .trim()
+          .replace(/\s+/g, '_')
+          .replace(/[^\w\.\-\_]/g, '');
+      };
+
+      const handleFiles = (fileList) => {
+        for (let i = 0; i < fileList.length; i++) {
+          const file = fileList[i];
+          const cleanName = cleanFilename(file.name);
+          uploadQueue.value.push({
+            file,
+            cleanName,
+            status: 'ready',
+            progress: 0,
+            errorMsg: ''
+          });
+        }
+        showUploadDrawer.value = true;
+      };
+
+      const handleFileSelect = (e) => {
+        handleFiles(e.target.files);
+        e.target.value = '';
+      };
+
+      const handleDrop = (e) => {
+        isDragging.value = false;
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleFiles(e.dataTransfer.files);
+        }
+      };
+
+      const removeQueueItem = (idx) => {
+        uploadQueue.value.splice(idx, 1);
+      };
+
+      const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = (error) => reject(error);
+        });
+      };
+
+      const uploadAllFiles = async () => {
+        if (!hasToken.value) {
+          openTokenModal.value = true;
+          showToast('Please set your GitHub Personal Access Token to upload.', 'error');
+          return;
+        }
+
+        isUploading.value = true;
+
+        for (const item of uploadQueue.value) {
+          if (item.status === 'done') continue;
+
+          item.status = 'uploading';
+          item.progress = 20;
+
+          try {
+            const base64Content = await fileToBase64(item.file);
+            item.progress = 60;
+
+            // Check if file already exists to get SHA for update
+            let existingSha = null;
+            const checkRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/assets/${encodeURIComponent(item.cleanName)}`, {
+              headers: {
+                'Authorization': `token ${token.value.trim()}`,
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            });
+            if (checkRes.ok) {
+              const fileData = await checkRes.json();
+              existingSha = fileData.sha;
+            }
+
+            const bodyPayload = {
+              message: `Upload asset: ${item.cleanName}`,
+              content: base64Content,
+              branch: BRANCH
+            };
+            if (existingSha) bodyPayload.sha = existingSha;
+
+            const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/assets/${encodeURIComponent(item.cleanName)}`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `token ${token.value.trim()}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(bodyPayload)
+            });
+
+            if (!putRes.ok) {
+              const errData = await putRes.json().catch(() => ({}));
+              throw new Error(errData.message || `Upload failed with HTTP ${putRes.status}`);
+            }
+
+            item.status = 'done';
+            item.progress = 100;
+            // Purge jsDelivr cache to make sure newest version is indexed
+            purgeCdn(item.cleanName);
+          } catch (err) {
+            console.error(err);
+            item.status = 'error';
+            item.errorMsg = err.message;
+            showToast(`Upload failed for ${item.cleanName}: ${err.message}`, 'error');
+          }
+        }
+
+        isUploading.value = false;
+        fetchAssets();
+      };
+
+      // Delete handling
+      const confirmDelete = (asset) => {
+        if (!hasToken.value) {
+          openTokenModal.value = true;
+          showToast('Please enter your GitHub Token to delete assets.', 'error');
+          return;
+        }
+        deleteTarget.value = asset;
+      };
+
+      const executeDelete = async () => {
+        if (!deleteTarget.value) return;
+        isDeleting.value = true;
+        try {
+          const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/assets/${encodeURIComponent(deleteTarget.value.name)}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `token ${token.value.trim()}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Delete asset: ${deleteTarget.value.name}`,
+              sha: deleteTarget.value.sha,
+              branch: BRANCH
+            })
+          });
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || `Delete failed with HTTP ${res.status}`);
+          }
+
+          showToast(`Deleted ${deleteTarget.value.name}`);
+          // Invalidate cache
+          purgeCdn(deleteTarget.value.name);
+          deleteTarget.value = null;
+          fetchAssets();
+        } catch (err) {
+          console.error(err);
+          showToast(err.message || 'Failed to delete asset', 'error');
+        } finally {
+          isDeleting.value = false;
+        }
+      };
+
+      const openPreviewModal = (asset) => {
+        previewAsset.value = asset;
+      };
+
+      const saveToken = () => {
+        if (inputToken.value.trim()) {
+          token.value = inputToken.value.trim();
+          localStorage.setItem('gh_token', token.value);
+          openTokenModal.value = false;
+          inputToken.value = '';
+          showToast('GitHub Token saved successfully!');
+          fetchAssets();
+        } else {
+          showToast('Please enter a valid token', 'error');
+        }
+      };
+
+      const clearToken = () => {
+        token.value = '';
+        localStorage.removeItem('gh_token');
+        openTokenModal.value = false;
+        showToast('Token cleared from local storage');
+      };
+
+      onMounted(() => {
+        initTokenFromUrl();
+        if (token.value) inputToken.value = token.value;
+        fetchAssets();
+      });
+
+      return {
+        cdnBaseUrl,
+        token,
+        hasToken,
+        inputToken,
+        showTokenPlain,
+        openTokenModal,
+        saveToken,
+        clearToken,
+        assets,
+        loading,
+        fetchAssets,
+        searchQuery,
+        selectedCategory,
+        categories,
+        sortBy,
+        filteredAssets,
+        videoCount,
+        imageCount,
+        formatSize,
+        isVideo,
+        isImage,
+        getExt,
+        getCdnUrl,
+        getRawUrl,
+        copyText,
+        copyEmbedCode,
+        purgeCdn,
+        showUploadDrawer,
+        isDragging,
+        uploadQueue,
+        isUploading,
+        handleDrop,
+        handleFileSelect,
+        removeQueueItem,
+        uploadAllFiles,
+        previewAsset,
+        openPreviewModal,
+        deleteTarget,
+        confirmDelete,
+        executeDelete,
+        isDeleting,
+        toasts
+      };
+    }
+  }).mount('#app');
+</script>
+</body>
+</html>
