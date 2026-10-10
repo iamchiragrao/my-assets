@@ -465,10 +465,10 @@
                     <span class="font-mono text-purple-400">{{ formatSize(item.file.size) }}</span>
                     <span class="truncate text-zinc-200 font-medium">{{ item.cleanName }}</span>
                     <span 
-                      :class="item.targetEngine === 'both' ? 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/30' : (item.targetEngine === 'vault' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30')"
+                      :class="item.targetEngine === 'vault' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : (item.targetEngine === 'too_large' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : (item.file.size <= 20*1024*1024 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-purple-500/10 text-purple-400 border-purple-500/30'))"
                       class="text-[10px] font-mono px-2 py-0.5 rounded border"
                     >
-                      {{ item.targetEngine === 'both' ? '🚀 Both (Edge + Vault)' : (item.targetEngine === 'vault' ? '📦 Release Vault (Both)' : '⚡ Edge CDN (Small)') }}
+                      {{ item.targetEngine === 'vault' ? '📦 Release Vault' : (item.targetEngine === 'too_large' ? '⚠️ Exceeds 100MB' : (item.file.size <= 20*1024*1024 ? '⚡ Edge CDN (<20MB)' : '🌐 GitHub Pages CDN (<100MB)')) }}
                     </span>
                   </div>
                   <div class="flex items-center gap-2">
@@ -1206,7 +1206,9 @@
               ...item,
               engine: 'edge',
               uniqueKey: 'edge_' + item.sha,
-              url: `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${ASSETS_REPO}@${BRANCH}/assets/${encodeURIComponent(item.name)}`
+              url: (item.size && item.size > 20 * 1024 * 1024)
+                ? `https://${REPO_OWNER}.github.io/${ASSETS_REPO}/assets/${encodeURIComponent(item.name)}`
+                : `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${ASSETS_REPO}@${BRANCH}/assets/${encodeURIComponent(item.name)}`
             }));
         } else if (res.status === 404) {
           edgeAssets.value = [];
@@ -1296,22 +1298,21 @@
           let target = 'edge';
           if (uploadEngine.value === 'vault') {
             target = 'vault';
-          } else if (uploadEngine.value === 'edge') {
-            target = file.size > 20 * 1024 * 1024 ? 'vault' : 'edge';
-          } else if (uploadEngine.value === 'dual') {
-            target = file.size > 20 * 1024 * 1024 ? 'vault' : 'both';
+          } else if (file.size > 100 * 1024 * 1024) {
+            target = 'too_large';
           } else {
-            target = file.size > 20 * 1024 * 1024 ? 'vault' : 'edge';
+            // Smart Auto-Route: All files up to 100MB route via CORS-enabled Git API
+            target = 'edge';
           }
 
           uploadQueue.value.push({
             file,
             cleanName,
             targetEngine: target,
-            status: 'ready',
+            status: target === 'too_large' ? 'error' : 'ready',
             progress: 0,
             url: '',
-            errorMsg: ''
+            errorMsg: target === 'too_large' ? 'File >100MB exceeds browser limit. Use desktop tool to compress (250MB -> 15MB).' : ''
           });
         }
         showUploadDrawer.value = true;
@@ -1344,7 +1345,7 @@
               reject(new Error(`Vault HTTP ${xhr.status}`));
             }
           };
-          xhr.onerror = () => reject(new Error('Network error'));
+          xhr.onerror = () => reject(new Error('Browser CORS blocked by uploads.github.com. Use desktop tool for Release Vault.'));
           xhr.send(item.file);
         });
       };
@@ -1389,7 +1390,9 @@
           xhr.onload = () => {
             if (xhr.status >= 200 && xhr.status < 300) {
               item.progress = 100;
-              item.url = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${ASSETS_REPO}@${BRANCH}/assets/${encodeURIComponent(item.cleanName)}`;
+              item.url = (item.file.size > 20 * 1024 * 1024)
+                ? `https://${REPO_OWNER}.github.io/${ASSETS_REPO}/assets/${encodeURIComponent(item.cleanName)}`
+                : `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${ASSETS_REPO}@${BRANCH}/assets/${encodeURIComponent(item.cleanName)}`;
               resolve(JSON.parse(xhr.responseText));
             } else {
               try {
@@ -1412,17 +1415,18 @@
 
         for (const item of uploadQueue.value) {
           if (item.status === 'done') continue;
+          if (item.targetEngine === 'too_large') {
+            item.status = 'error';
+            item.errorMsg = 'File >100MB exceeds browser limit. Use desktop tool.';
+            continue;
+          }
           item.status = 'uploading';
           item.progress = 10;
           try {
             if (item.targetEngine === 'vault') {
               await uploadToVault(item);
-            } else if (item.targetEngine === 'both') {
-              await uploadToEdge(item);
-              await uploadToVault(item);
             } else {
-              if (item.file.size > 20 * 1024 * 1024) await uploadToVault(item);
-              else await uploadToEdge(item);
+              await uploadToEdge(item);
             }
             item.status = 'done';
             item.progress = 100;
