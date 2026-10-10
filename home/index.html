@@ -198,12 +198,12 @@
           </svg>
         </div>
         <div>
-          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">⚡ Edge CDN Assets</div>
+          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">⚡ Edge CDN (Small Only)</div>
           <div class="text-2xl font-bold font-mono text-emerald-400">{{ edgeAssets.length }}</div>
         </div>
       </div>
 
-      <!-- Release Vault Assets (Up to 2GB) -->
+      <!-- Release Vault Assets (Both Small & Large up to 2GB) -->
       <div class="glass-card rounded-2xl p-4 flex items-center gap-3.5">
         <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -212,7 +212,7 @@
           </svg>
         </div>
         <div>
-          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">📦 Release Vault</div>
+          <div class="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">📦 Release Vault (Both)</div>
           <div class="text-2xl font-bold font-mono text-blue-400">{{ vaultAssets.length }}</div>
         </div>
       </div>
@@ -220,13 +220,13 @@
       <!-- Live Bandwidth & Speed Metric -->
       <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
         <div class="flex items-center justify-between text-[11px] font-mono uppercase text-zinc-400 tracking-wider mb-1">
-          <span>Delivery Engines</span>
-          <span class="text-purple-400 font-semibold text-[10px]">Dual Active</span>
+          <span>Storage Policy</span>
+          <span class="text-purple-400 font-semibold text-[10px]">Configured</span>
         </div>
         <div class="flex items-center justify-between gap-1 text-[11px] font-mono">
-          <span class="text-emerald-400">jsDelivr &lt;15ms</span>
+          <span class="text-emerald-400">Edge: Small (&lt;20MB)</span>
           <span class="text-zinc-600">•</span>
-          <span class="text-blue-400">GitHub Vault 2GB</span>
+          <span class="text-blue-400">Vault: Both (&lt;2GB)</span>
         </div>
       </div>
     </div>
@@ -244,7 +244,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse"></span>
-            <h2 class="font-bold text-base text-white">Upload Assets (Dual-Engine Mode)</h2>
+            <h2 class="font-bold text-base text-white">Upload Assets (Engine Policy)</h2>
           </div>
           <button @click="showUploadDrawer = false" class="text-zinc-500 hover:text-zinc-300">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -255,28 +255,39 @@
         </div>
 
         <!-- Engine Routing Selector -->
-        <div class="flex items-center gap-2 mb-4 bg-black/40 p-1.5 rounded-xl border border-zinc-800 text-xs font-mono max-w-xl">
-          <span class="text-zinc-500 px-2">Engine:</span>
+        <div class="flex items-center flex-wrap gap-2 mb-4 bg-black/40 p-2 rounded-xl border border-zinc-800 text-xs font-mono">
+          <span class="text-zinc-500 px-1 font-semibold">Destination:</span>
           <button 
             @click="uploadEngine = 'auto'"
             :class="uploadEngine === 'auto' ? 'bg-purple-600 text-white font-semibold' : 'text-zinc-400 hover:text-zinc-200'"
             class="px-3 py-1 rounded-lg transition-all"
+            title="Auto-routes: Small (<20MB) to Edge CDN, Heavy (>20MB) to Vault"
           >
             🤖 Smart Auto-Route
-          </button>
-          <button 
-            @click="uploadEngine = 'edge'"
-            :class="uploadEngine === 'edge' ? 'bg-emerald-600 text-white font-semibold' : 'text-zinc-400 hover:text-zinc-200'"
-            class="px-3 py-1 rounded-lg transition-all"
-          >
-            ⚡ Edge CDN (&lt;20MB)
           </button>
           <button 
             @click="uploadEngine = 'vault'"
             :class="uploadEngine === 'vault' ? 'bg-blue-600 text-white font-semibold' : 'text-zinc-400 hover:text-zinc-200'"
             class="px-3 py-1 rounded-lg transition-all"
+            title="Uploads both small & large files directly to Release Vault"
           >
-            📦 Release Vault (Up to 2GB)
+            📦 Release Vault (Both Small & Large)
+          </button>
+          <button 
+            @click="uploadEngine = 'edge'"
+            :class="uploadEngine === 'edge' ? 'bg-emerald-600 text-white font-semibold' : 'text-zinc-400 hover:text-zinc-200'"
+            class="px-3 py-1 rounded-lg transition-all"
+            title="Strictly for small files under 20MB"
+          >
+            ⚡ Edge CDN (Small Only &lt;20MB)
+          </button>
+          <button 
+            @click="uploadEngine = 'dual'"
+            :class="uploadEngine === 'dual' ? 'bg-fuchsia-600 text-white font-semibold' : 'text-zinc-400 hover:text-zinc-200'"
+            class="px-3 py-1 rounded-lg transition-all"
+            title="Small files upload to BOTH Edge CDN & Release Vault!"
+          >
+            🚀 Dual-Sync Both (<20MB)
           </button>
         </div>
 
@@ -332,10 +343,10 @@
                   <span class="font-mono text-purple-400">{{ formatSize(item.file.size) }}</span>
                   <span class="truncate text-zinc-200 font-medium">{{ item.cleanName }}</span>
                   <span 
-                    :class="item.targetEngine === 'vault' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'"
+                    :class="item.targetEngine === 'both' ? 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/30' : (item.targetEngine === 'vault' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30')"
                     class="text-[10px] font-mono px-2 py-0.5 rounded border"
                   >
-                    {{ item.targetEngine === 'vault' ? '📦 Release Vault' : '⚡ Edge CDN' }}
+                    {{ item.targetEngine === 'both' ? '🚀 Both (Edge + Vault)' : (item.targetEngine === 'vault' ? '📦 Release Vault (Both)' : '⚡ Edge CDN (Small)') }}
                   </span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -1084,15 +1095,29 @@
           const file = fileList[i];
           const cleanName = cleanFilename(file.name);
 
-          // Decide target engine based on size and user selection
+          // Engine Policy:
+          // 📦 Release Vault accepts BOTH small and large files (up to 2GB)
+          // ⚡ Edge CDN accepts ONLY small files (< 20MB)
           let target = 'edge';
           if (uploadEngine.value === 'vault') {
-            target = 'vault';
+            target = 'vault'; // Release Vault accepts both small and large!
           } else if (uploadEngine.value === 'edge') {
-            target = 'edge';
+            if (file.size > 20 * 1024 * 1024) {
+              target = 'vault';
+              showToast(`"${file.name}" > 20MB. Edge CDN is strictly for small files. Auto-routed to Release Vault!`, 'info');
+            } else {
+              target = 'edge';
+            }
+          } else if (uploadEngine.value === 'dual') {
+            if (file.size > 20 * 1024 * 1024) {
+              target = 'vault';
+              showToast(`"${file.name}" > 20MB. Routed to Release Vault only.`, 'info');
+            } else {
+              target = 'both'; // Uploads to both Edge CDN and Release Vault!
+            }
           } else {
-            // Auto mode: If > 19 MB, auto-route to Release Vault!
-            target = (file.size > 19 * 1024 * 1024) ? 'vault' : 'edge';
+            // Auto mode: Small files go to Edge CDN; large files go to Release Vault!
+            target = (file.size > 20 * 1024 * 1024) ? 'vault' : 'edge';
           }
 
           uploadQueue.value.push({
@@ -1238,13 +1263,20 @@
 
           try {
             if (item.targetEngine === 'vault') {
+              // Release Vault accepts both small and large files!
               await uploadToVault(item);
+            } else if (item.targetEngine === 'both') {
+              // Dual-Sync: Upload to Edge CDN AND Release Vault!
+              item.progress = 20;
+              await uploadToEdge(item);
+              item.progress = 60;
+              await uploadToVault(item);
+              showToast(`${item.cleanName} synced to both Edge CDN & Release Vault!`);
             } else {
-              // Edge CDN check: warn if over 20MB
+              // Edge CDN (strictly small <20MB)
               if (item.file.size > 20 * 1024 * 1024) {
-                // Auto switch to vault!
                 item.targetEngine = 'vault';
-                showToast(`Auto-switching ${item.cleanName} to Release Vault (>20MB)`);
+                showToast(`Edge CDN is for small files only. Routing ${item.cleanName} to Release Vault...`);
                 await uploadToVault(item);
               } else {
                 await uploadToEdge(item);
