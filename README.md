@@ -1,71 +1,40 @@
-# ⚡ My Assets & High-Performance CDN Delivery
+# ⚡ Masterplan: Dual-Engine Asset & Media Delivery
 
-Global media asset repository and ultra-fast edge delivery for **iamchiragrao**, powered by **jsDelivr Anycast CDN** and **GitHub Pages**.
+Global media architecture for **iamchiragrao**, pairing **jsDelivr Anycast Edge CDN** for web-performance streaming with **GitHub Releases Vault** for high-capacity object storage up to **2 GB per file**.
 
 ---
 
-## 🚀 Live Web Dashboard
+## 🚀 Live Dashboard UI
 
-Manage, upload, preview, and delete assets with a high-performance studio interface:
+Manage, preview, stream, upload, and purge assets across both engines in one unified view:
 
 👉 **[https://iamchiragrao.github.io/my-assets/home](https://iamchiragrao.github.io/my-assets/home)**
 
 ---
 
-## 🌐 Global CDN URL Formats
+## 🏛️ Architecture Breakdown
 
-All files uploaded to `/assets` are cached at 750+ Anycast edge nodes worldwide:
-
-### 1. jsDelivr Ultra-Fast CDN (Recommended for Production)
-```text
-https://cdn.jsdelivr.net/gh/iamchiragrao/my-assets@main/assets/<filename>
-```
-* **Latency:** <15ms globally
-* **Caching:** Unlimited global Anycast edge caching with HTTP/2 and Brotli/Gzip compression
-* **Best for:** Video clips, hero graphics, photos, SVGs, audio clips
-
-### 2. GitHub Pages Direct URL (Fallback)
-```text
-https://iamchiragrao.github.io/my-assets/assets/<filename>
-```
-
-### 3. GitHub Raw Content URL (For raw downloads)
-```text
-https://raw.githubusercontent.com/iamchiragrao/my-assets/main/assets/<filename>
-```
+| Feature | ⚡ Engine 1: Edge CDN (jsDelivr) | 📦 Engine 2: Release Vault (GitHub Releases) |
+| :--- | :--- | :--- |
+| **Primary Use** | Website Video Clips, Hero Graphics, SVGs, Loops | 4K Client Masters, Long Reels, Heavy Project Archives |
+| **File Size Limit** | Up to **20 MB** per file | Up to **2 GB** per file |
+| **Latency** | Sub-15ms Anycast Edge (750+ POPs) | Global Fastly Edge Network |
+| **Video Scrubbing** | Native HTTP/2 Byte-Range (Perfect for iOS/Android) | Standard HTTP Range with 302 Redirect |
+| **URL Format** | `https://cdn.jsdelivr.net/gh/iamchiragrao/my-assets@main/assets/<file>` | `https://github.com/iamchiragrao/my-assets/releases/download/v1.0-assets/<file>` |
+| **Upload Pipeline** | Base64 via Git Contents API | Raw Binary Stream via Release Asset API |
+| **Cache Purging** | `https://purge.jsdelivr.net/gh/...` (1-click in UI) | Instant (Immutable asset URL) |
 
 ---
 
-## 🔄 Instant Cache Invalidation (Purge Trick)
+## 🤖 Smart Auto-Routing in the Web Dashboard
 
-When you update or replace an existing asset with the same name, jsDelivr edge nodes can be instantly purged:
-
-```bash
-curl https://purge.jsdelivr.net/gh/iamchiragrao/my-assets@main/assets/<filename>
-```
-*(The web dashboard also includes a 1-click **Purge** button for every asset.)*
+When you drag and drop files onto the dashboard:
+1. **Files < 20 MB:** Automatically routed to **Edge CDN** for instant mobile-optimized web streaming.
+2. **Files > 20 MB (up to 2 GB):** Automatically routed to **Release Vault** with real-time percentage progress bars via raw binary streaming.
+3. You can also manually toggle between **⚡ Edge CDN** and **📦 Release Vault** before uploading.
 
 ---
 
-## 🛠 Features of the Web Dashboard
+## 🛠 Local 1-Click Desktop Tool (`tools/upload-asset.py`)
 
-- **Drag-and-Drop Uploader:** Upload single or batch files with progress indicators.
-- **Auto-Sanitization:** Renames files to web-safe slugs (no spaces or URL-breaking special characters).
-- **Inline Video Player:** Hover preview, loop, volume, and fullscreen modal player for MP4 / WebM / MOV videos.
-- **1-Click Copy Links:** Instant copy buttons for jsDelivr CDN URLs, HTML tags (`<video>`, `<img>`), and Markdown.
-- **Safe Authentication:** Token is stored locally in your browser's `localStorage` and never committed into public git code.
-- **Deletion:** Remove assets directly from GitHub with 1 click.
-
----
-
-## 📦 Directory Structure
-
-```text
-my-assets/
-├── assets/          # All uploaded videos, images, and media files
-├── home/
-│   └── index.html   # Entrypoint for /home route
-├── index.html       # Web Dashboard SPA
-├── 404.html         # GitHub Pages SPA fallback
-└── README.md        # Documentation
-```
+A desktop script is included in `c:\Projects\iamchiragrao\tools` allowing you to compress large 250MB+ raw video exports into web-optimized H.264 clips in 3 seconds before publishing, or upload them directly to the Vault!
